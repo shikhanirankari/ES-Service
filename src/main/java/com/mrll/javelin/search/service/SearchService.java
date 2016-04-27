@@ -36,7 +36,7 @@ public class SearchService {
 
 	private ESLogger logger = Loggers.getLogger(getClass().getName());
 
-	public SearchResponse google(String search, int first, int pageSize) {
+	public SearchResponse searchIndex(String search, int first, int pageSize) {
 		if (logger.isDebugEnabled())
 			logger.debug("google('{}', {}, {})", search, first, pageSize);
 

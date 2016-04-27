@@ -53,7 +53,7 @@ public class SearchController {
 	public ResponseEntity<RestResponseSearchResponse> search(@PathVariable final String term) throws Exception {
 		SearchResponse results = null;
 		try {
-			results = searchService.google(term, 0, 10);
+			results = searchService.searchIndex(term, 0, 10);
 		} catch (Exception e) {
 			// return new RestResponseSearchResponse(new RestAPIException(e));
 		}
