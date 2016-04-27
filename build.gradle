@@ -78,10 +78,10 @@ dependencies {
     compile "io.pivotal.spring.cloud:spring-cloud-services-starter-config-client"
 
 	compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
-    compile "org.springframework.boot:spring-boot-starter-data-mongodb:${springBootVersion}"
     
     //e;astic search
     compile 'org.elasticsearch:elasticsearch:1.5.2'
+    compile 'org.apache.tika:tika-core:1.12'
     
 	compile("org.springframework.boot:spring-boot-starter-tomcat:${springBootVersion}")
     compile "org.apache.commons:commons-lang3:3.4"
@@ -104,7 +104,7 @@ dependencies {
     testCompile("org.assertj:assertj-core:3.2.0")
     testCompile("com.jayway.restassured:spring-mock-mvc:2.8.0")
     testCompile("org.codehaus.groovy:groovy-all:2.4.5")
-    testCompile("com.mrll.javelin:javelin-common-test:0.0.11-SNAPSHOT")
+   // testCompile("com.mrll.javelin:javelin-common-test:0.0.11-SNAPSHOT")
     }
 
 dependencyManagement {

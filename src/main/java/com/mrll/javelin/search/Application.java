@@ -1,7 +1,11 @@
-package com.mrll.javelin.search.application;
+package com.mrll.javelin.search;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+
+import com.mrll.javelin.common.security.EnableJavelinCommonSecurity;
+import com.mrll.javelin.common.web.EnableJavelinCommonWeb;
 
 /**
  * @description The Application class is basic configuration class for
@@ -11,6 +15,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *                        following:
  */
 @SpringBootApplication
+//@EnableDiscoveryClient
+@EnableJavelinCommonWeb
+//@EnableJavelinCommonSecurity
 public class Application {
 	/**
 	 * Method provides functionality to launch MicroService .

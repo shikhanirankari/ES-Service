@@ -1,4 +1,4 @@
-package com.mrll.javelin.search.application.config;
+package com.mrll.javelin.search.config;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;

@@ -1,0 +1,68 @@
+info:
+  description: "Search Service Implementation"
+  apiDocumentation: "TBD"
+
+server:
+  port: 8097
+
+security:
+  basic:
+    enabled: false
+
+javelin:
+  common:
+    web:
+      config:
+        swagger:
+          controllerPackage: com.mrll.javelin.search.controller
+          apiName: Search Api
+          apiVersion: v1
+          apiDescription: API for search implementation
+
+
+serviceUrl:
+ blobDownloadUrl:
+   http://AZUREBLOBDOWNLOAD-SERVICE/javelin/api/blob/download/{containerName}/{docName:.+}
+ metaDataServiceUrl:
+   http://DOC-METADATA-SERVICE/javelin/api/core/metadata?projectId={0}&level={1}&id={2}&fullHierarchy={4}&formType={5}
+ bulkDownloadUrl: 
+   http://AZUREBULKDOWNLOAD-SERVICE/javelin/api/blob/download 
+
+
+
+eureka:
+  instance:
+    securePortEnabled: false
+    leaseRenewalIntervalInSeconds: 10
+    metadataMap:
+      instanceId: ${vcap.application.instance_id:${spring.application.name}:${spring.application.instance_id:${random.value}}}
+  client:
+    registryFetchIntervalSeconds: 5
+
+hystrix:
+  command:
+    default:
+      execution.isolation.thread.timeoutInMilliseconds: 3000
+
+  stream:
+    amqp:
+      enabled: false
+
+endpoints:
+  health:
+    sensitive: false
+management:
+  security:
+    enabled: false
+  health:
+    rabbit:
+      enabled: false
+
+logging:
+  level:
+    com.netflix.discovery.DiscoveryClient: WARN
+
+---
+spring:
+  profiles: cloud
+
