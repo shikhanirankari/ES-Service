@@ -1,10 +1,10 @@
 
 package com.mrll.javelin.search.service;
 
-import static org.elasticsearch.index.query.FilterBuilders.prefixFilter;
+import static com.mrll.javelin.search.document.constant.SMDSearchProperties.INDEX_NAME;
+import static com.mrll.javelin.search.document.constant.SMDSearchProperties.INDEX_TYPE_DOC;
 import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
 import static org.elasticsearch.index.query.QueryBuilders.queryString;
-import static org.elasticsearch.search.facet.FacetBuilders.termsFacet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,16 +14,11 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.common.logging.ESLogger;
 import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.text.Text;
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.facet.terms.TermsFacet;
-import org.elasticsearch.search.facet.terms.TermsFacet.Entry;
 import org.elasticsearch.search.highlight.HighlightField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import static com.mrll.javelin.search.document.constant.SMDSearchProperties.INDEX_NAME;
-import static com.mrll.javelin.search.document.constant.SMDSearchProperties.INDEX_TYPE_DOC;
 
 import com.mrll.javelin.search.modal.Hit;
 import com.mrll.javelin.search.service.response.SearchResponse;
@@ -38,7 +33,7 @@ public class SearchService {
 
 	public SearchResponse searchIndex(String search, int first, int pageSize) {
 		if (logger.isDebugEnabled())
-			logger.debug("google('{}', {}, {})", search, first, pageSize);
+			logger.debug("searchIndex('{}', {}, {})", search, first, pageSize);
 
 		long totalHits = -1;
 		long took = -1;
@@ -61,8 +56,6 @@ public class SearchService {
                 .addHighlightedField("file.filename")
 				.addHighlightedField("content")
                 .addHighlightedField("meta.title")
-				.setHighlighterPreTags("<span class='badge badge-info'>")
-				.setHighlighterPostTags("</span>")
                 .addFields("*", "_source")
                 .execute().actionGet();
 

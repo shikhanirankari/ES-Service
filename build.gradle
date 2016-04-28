@@ -41,7 +41,7 @@ jacocoTestReport {
 check.dependsOn jacocoTestReport
 
 jar {
-    baseName = 'doc-metadata-service'
+    baseName = 'search-service'
     version = '0.0.1-SNAPSHOT'
 }
 
@@ -51,7 +51,7 @@ publishing {
         mavenJava(MavenPublication) {
             // TODO: Where to place these properties?
             groupId 'com.mrll.javelin'
-            artifactId 'doc-metadata-service'
+            artifactId 'search-service'
             version '0.0.1-SNAPSHOT'
 
             from components.java
@@ -80,7 +80,7 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
     
     //e;astic search
-    compile 'org.elasticsearch:elasticsearch:1.5.2'
+    compile 'org.elasticsearch:elasticsearch:2.3.1'
     compile 'org.apache.tika:tika-core:1.12'
     
 	compile("org.springframework.boot:spring-boot-starter-tomcat:${springBootVersion}")
