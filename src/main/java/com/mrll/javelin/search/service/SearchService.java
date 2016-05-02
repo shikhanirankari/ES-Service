@@ -4,7 +4,7 @@ package com.mrll.javelin.search.service;
 import static com.mrll.javelin.search.document.constant.SMDSearchProperties.INDEX_NAME;
 import static com.mrll.javelin.search.document.constant.SMDSearchProperties.INDEX_TYPE_DOC;
 import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
-import static org.elasticsearch.index.query.QueryBuilders.queryString;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public class SearchService {
 		if (search == null || search.trim().length() <= 0) {
 			qb = matchAllQuery();
 		} else {
-			qb = queryString(search);
+			qb = queryStringQuery(search);
 		}
 
 		org.elasticsearch.action.search.SearchResponse searchHits = esClient

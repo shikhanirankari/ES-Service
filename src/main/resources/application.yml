@@ -3,7 +3,7 @@ info:
   apiDocumentation: "TBD"
 
 server:
-  port: 8097
+  port: 9087
 
 security:
   basic:
