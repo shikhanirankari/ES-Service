@@ -39,7 +39,14 @@ public class SearchController {
 
 	@ApiOperation(value = "", notes = "index")
 	@RequestMapping(value = "/javelin/index", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<String> index(@RequestBody Document document) throws Exception {
+	public ResponseEntity<String> index(@RequestParam(required = true) String docId) throws Exception {
+		
+		Document document =new Document();
+		document.setId(docId);
+		document.setIndex("docs");
+		document.setType("doc");
+		document.setContentType("application/pdf");
+		document.setName(docId);
 		documentService.push(document);
 
 		return new ResponseEntity<>(HttpStatus.OK);

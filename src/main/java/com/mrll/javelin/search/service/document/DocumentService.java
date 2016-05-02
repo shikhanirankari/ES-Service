@@ -17,9 +17,8 @@ import org.springframework.stereotype.Component;
 
 import com.mrll.javelin.search.delegate.BlobDownloadServiceDelegate;
 import com.mrll.javelin.search.document.constant.SMDSearchProperties;
+import com.mrll.javelin.search.exception.RestAPIException;
 import com.mrll.javelin.search.modal.Document;
-
-
 
 @Component
 public class DocumentService {
@@ -34,7 +33,10 @@ public class DocumentService {
 
 		BlobDownloadServiceDelegate blobDownloadServiceDelegate = new BlobDownloadServiceDelegate();
 		ResponseEntity<byte[]> blobDownloadResponse = blobDownloadServiceDelegate.blobDownload("project1",
-				"a4f79c98-2a98-4ea8-897f-c4245f59a371_OCR");
+				document.getId());
+		if (blobDownloadResponse.getBody() == null) {
+			throw new RestAPIException("document not foind");
+		}
 
 		if (StringUtils.isEmpty(document.getIndex())) {
 			document.setIndex(SMDSearchProperties.INDEX_NAME);
@@ -51,19 +53,12 @@ public class DocumentService {
 		contentBuilder.field("content", parsedContents);
 		contentBuilder.field(SMDSearchProperties.FILENAME, document.getName());
 
-		
-		contentBuilder
-         .startObject(SMDSearchProperties.META)
-         .field(SMDSearchProperties.TITLE, "title")
-         .endObject(); 
-
+		contentBuilder.startObject(SMDSearchProperties.META).field(SMDSearchProperties.TITLE, "title").endObject();
 
 		contentBuilder.endObject();
 
-	
-			client.prepareIndex(document.getIndex(), document.getType(), document.getId()).setSource(contentBuilder)
-					.execute().actionGet();
-
+		client.prepareIndex(document.getIndex(), document.getType(), document.getId()).setSource(contentBuilder)
+				.execute().actionGet();
 
 	}
 
