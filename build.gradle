@@ -82,7 +82,8 @@ dependencies {
     //e;astic search
     compile 'org.elasticsearch:elasticsearch:2.1.2'
     compile 'org.apache.tika:tika-core:1.12'
-    
+     compile 'org.apache.tika:tika-parsers:1.12'
+     
 	compile("org.springframework.boot:spring-boot-starter-tomcat:${springBootVersion}")
     compile "org.apache.commons:commons-lang3:3.4"
     compile "org.springframework.boot:spring-boot-starter-actuator"
@@ -99,6 +100,8 @@ dependencies {
     compile("com.mrll.javelin:javelin-common-security:0.0.10-SNAPSHOT")
     compile "org.springframework.amqp:spring-rabbit:1.4.6.RELEASE"
     compile 'io.jmnarloch:request-correlation-spring-cloud-starter:1.2.0'
+   
+    
 
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
     testCompile("org.assertj:assertj-core:3.2.0")

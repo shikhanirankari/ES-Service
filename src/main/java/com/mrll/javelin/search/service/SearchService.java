@@ -14,7 +14,10 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.common.logging.ESLogger;
 import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.text.Text;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.highlight.HighlightField;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,24 +43,12 @@ public class SearchService {
 
 		SearchResponse searchResponse = null;
 
-		QueryBuilder qb;
-		if (search == null || search.trim().length() <= 0) {
-			qb = matchAllQuery();
-		} else {
-			qb = queryStringQuery(search);
-		}
+		QueryStringQueryBuilder qsqb = new QueryStringQueryBuilder(search).field("content", 2).field("title");
 
-		org.elasticsearch.action.search.SearchResponse searchHits = esClient
-				.prepareSearch()
-                .setIndices(getSearchableIndexes())
-                .setTypes(getSearchableTypes())
-                .setSearchType(SearchType.DFS_QUERY_THEN_FETCH).setQuery(qb)
-				.setFrom(first).setSize(pageSize)
-                .addHighlightedField("file.filename")
-				.addHighlightedField("content")
-                .addHighlightedField("meta.title")
-                .addFields("*", "_source")
-                .execute().actionGet();
+		org.elasticsearch.action.search.SearchResponse searchHits = esClient.prepareSearch()
+				.setIndices(getSearchableIndexes()).setTypes(getSearchableTypes())
+				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH).setQuery(qsqb).addHighlightedField("title", 0, 0)
+				.addHighlightedField("content", 150, 3).setFrom(0).setSize(10).setExplain(true).execute().actionGet();
 
 		totalHits = searchHits.getHits().totalHits();
 		took = searchHits.getTookInMillis();
@@ -69,24 +60,17 @@ public class SearchService {
 			hit.setIndex(searchHit.getIndex());
 			hit.setType(searchHit.getType());
 			hit.setId(searchHit.getId());
-		    hit.setSource(searchHit.getSourceAsString());
+			hit.setScore(searchHit.getScore());
+			// hit.setSource(searchHit.getSource());
 
-            if (searchHit.getFields() != null) {
-                if (searchHit.getFields().get("file.content_type") != null) {
-                    hit.setContentType((String) searchHit.getFields().get("file.content_type").getValue());
-                }
-            }
-
-
-
-            if (searchHit.getHighlightFields() != null) {
-                for (HighlightField highlightField : searchHit.getHighlightFields().values()) {
-                    Text[] fragmentsBuilder = highlightField.getFragments();
-                    for (Text fragment : fragmentsBuilder) {
-                        hit.getHighlights().add(fragment.string());
-                    }
-                }
-            }
+			if (searchHit.getHighlightFields() != null) {
+				for (HighlightField highlightField : searchHit.getHighlightFields().values()) {
+					Text[] fragmentsBuilder = highlightField.getFragments();
+					for (Text fragment : fragmentsBuilder) {
+						hit.getHighlights().add(fragment.string());
+					}
+				}
+			}
 
 			hits.add(hit);
 		}
@@ -100,22 +84,20 @@ public class SearchService {
 
 	}
 
+	public String[] getSearchableIndexes() {
+		List<String> indexList = new ArrayList<String>();
+		indexList.add(INDEX_NAME);
+		String[] indexArr = new String[indexList.size()];
+		indexArr = indexList.toArray(indexArr);
+		return indexArr;
+	}
 
-
-    public String[] getSearchableIndexes(){
-        List<String> indexList = new ArrayList<String>();
-        indexList.add(INDEX_NAME);
-        String[] indexArr = new String[indexList.size()];
-        indexArr = indexList.toArray(indexArr);
-        return indexArr;
-    }
-
-    public String[] getSearchableTypes(){
-        List<String> typeList = new ArrayList<String>();
-        typeList.add(INDEX_TYPE_DOC);
-        String[] typeArr = new String[typeList.size()];
-        typeArr = typeList.toArray(typeArr);
-        return typeArr;
-    }
+	public String[] getSearchableTypes() {
+		List<String> typeList = new ArrayList<String>();
+		typeList.add(INDEX_TYPE_DOC);
+		String[] typeArr = new String[typeList.size()];
+		typeArr = typeList.toArray(typeArr);
+		return typeArr;
+	}
 
 }

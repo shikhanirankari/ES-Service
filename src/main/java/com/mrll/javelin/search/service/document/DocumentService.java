@@ -3,17 +3,28 @@ package com.mrll.javelin.search.service.document;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.tika.exception.TikaException;
 import org.apache.tika.io.IOUtils;
 import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.ParseContext;
+import org.apache.tika.sax.BodyContentHandler;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.Strings;
+import org.apache.tika.parser.xml.XMLParser;
+
 import org.elasticsearch.common.logging.ESLogger;
 import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.xml.sax.SAXException;
 
 import com.mrll.javelin.search.delegate.BlobDownloadServiceDelegate;
 import com.mrll.javelin.search.document.constant.SMDSearchProperties;
@@ -27,9 +38,10 @@ public class DocumentService {
 
 	@Autowired
 	Client client;
+	
+	Metadata metadata;
 
-	@SuppressWarnings("deprecation")
-	public void push(Document document) throws Exception {
+	public void push(Document document) throws IOException, SAXException, RestAPIException, TikaException {
 
 		BlobDownloadServiceDelegate blobDownloadServiceDelegate = new BlobDownloadServiceDelegate();
 		ResponseEntity<byte[]> blobDownloadResponse = blobDownloadServiceDelegate.blobDownload("project1",
@@ -46,20 +58,33 @@ public class DocumentService {
 			document.setType(SMDSearchProperties.INDEX_TYPE_DOC);
 		}
 
-		String parsedContents = IOUtils.toString(blobDownloadResponse.getBody());
-
 		XContentBuilder contentBuilder = jsonBuilder().startObject().prettyPrint();
 
-		contentBuilder.field("content", parsedContents);
-		contentBuilder.field(SMDSearchProperties.FILENAME, document.getName());
+		contentBuilder.field(SMDSearchProperties.CONTENT, getFileRawText(blobDownloadResponse.getBody()));
 
-		contentBuilder.startObject(SMDSearchProperties.META).field(SMDSearchProperties.TITLE, "title").endObject();
+		contentBuilder.field(SMDSearchProperties.TITLE, "title-"+document.getName());
 
 		contentBuilder.endObject();
 
 		client.prepareIndex(document.getIndex(), document.getType(), document.getId()).setSource(contentBuilder)
 				.execute().actionGet();
 
+	}
+
+	private String getFileRawText(byte[] parsedContents) throws IOException, SAXException, TikaException {
+		// detecting the file type
+		BodyContentHandler handler = new BodyContentHandler();
+	    metadata = new Metadata();
+		InputStream inputstream = new ByteArrayInputStream(parsedContents);
+		ParseContext pcontext = new ParseContext();
+
+		// Xml parser
+		XMLParser xmlparser = new XMLParser();
+
+		xmlparser.parse(inputstream, handler, metadata, pcontext);
+
+		return handler.toString();
+	     //String[] metadataNames = metadata.names();
 	}
 
 }

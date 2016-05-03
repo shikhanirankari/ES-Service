@@ -11,5 +11,5 @@ public interface SMDSearchProperties {
     public static final String TITLE = "title";
     public static final String DATE = "date";
     public static final String KEYWORDS = "keywords";
-	
+    public static final String CONTENT = "content";
 }

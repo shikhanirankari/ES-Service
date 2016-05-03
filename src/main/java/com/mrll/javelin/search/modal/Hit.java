@@ -3,6 +3,7 @@ package com.mrll.javelin.search.modal;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 public class Hit implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -11,12 +12,10 @@ public class Hit implements Serializable {
 	protected String type;
 	protected String id;
 	
-	protected String source;
+	protected float score;
 	
 	protected Collection<String> highlights = new ArrayList<String>();
-	
-	protected String title;
-	protected String contentType;
+	//protected Map<String, Object>  source;
 	
 	/**
 	 * @return the index
@@ -57,14 +56,14 @@ public class Hit implements Serializable {
 	/**
 	 * @return the source
 	 */
-	public String getSource() {
-		return source;
+	public float getScore() {
+		return score;
 	}
 	/**
 	 * @param source the source to set
 	 */
-	public void setSource(String source) {
-		this.source = source;
+	public void setScore(float score) {
+		this.score = score;
 	}
 	/**
 	 * @return the highlights
@@ -78,30 +77,7 @@ public class Hit implements Serializable {
 	public void setHighlights(Collection<String> highlights) {
 		this.highlights = highlights;
 	}
-	/**
-	 * @return the title
-	 */
-	public String getTitle() {
-		return title;
-	}
-	/**
-	 * @param title the title to set
-	 */
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	/**
-	 * @return the contentType
-	 */
-	public String getContentType() {
-		return contentType;
-	}
-	/**
-	 * @param contentType the contentType to set
-	 */
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
-
+	
+	
 	
 }
